@@ -1,0 +1,6 @@
+#!/bin/bash
+
+RELEASE=$1
+BUILD_DATE=$(date +'%Y-%m-%d')
+
+docker build --build-arg RELEASE=$RELEASE --build-arg BUILD_DATE=$BUILD_DATE --build-arg GITEA_VERSION=$RELEASE --no-cache -t hymnis/gitea:latest -t hymnis/gitea:$RELEASE .

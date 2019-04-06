@@ -1,0 +1,18 @@
+---
+version: '2'
+services:
+  gitea:
+    image: hymnis/gitea:latest
+    container_name: gitea
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PUID=1002
+      - GUID=1001
+      - UMASK_SET=022
+      - TZ=Europe/Stockholm
+      - DB_TYPE=sqlite3
+      - DB_DATABASE=gitea
+    volumes:
+      - /var/docker/gitea:/data
