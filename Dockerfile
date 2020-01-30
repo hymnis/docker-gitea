@@ -1,11 +1,14 @@
 # Build stage
-FROM golang:1.11-alpine3.9 AS build-env
+FROM golang:1.13-alpine3.11 AS build-env
+
+ARG GOPROXY
+ENV GOPROXY ${GOPROXY:-direct}
 
 ARG GITEA_VERSION
 ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata $TAGS"
 
-RUN apk --no-cache add build-base git
+RUN apk --no-cache add build-base git nodejs npm
 
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
@@ -34,7 +37,7 @@ RUN \
  s6 \
  sqlite \
  su-exec \
- tzdata 
+ tzdata
 
 RUN \
  addgroup \
@@ -52,11 +55,13 @@ RUN \
 ENV USER git
 ENV GITEA_CUSTOM /data/gitea
 
+
+VOLUME ["/data"]
+
 ENTRYPOINT ["/usr/bin/entrypoint"]
 CMD ["/bin/s6-svscan", "/etc/s6"]
 
 EXPOSE 3000 22
-VOLUME /data
 
 COPY docker /
 COPY --from=build-env /go/src/code.gitea.io/gitea/gitea /app/gitea/gitea
